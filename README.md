@@ -34,6 +34,7 @@ their own [standalone repositories](#graduated-standalone-repos).
 | [Causal Traps](projects/causal-traps) | Statistics | causal inference (DAGs, adjustment) |
 | [Flight Network](projects/flight-network) | Networks | graph theory, robustness |
 | [Recommender](projects/recommender) | Machine learning | collaborative filtering, matrix factorization |
+| [Neural Net](projects/neural-net) | Machine learning | neural network + backprop from scratch |
 
 ---
 
@@ -71,6 +72,9 @@ their own [standalone repositories](#graduated-standalone-repos).
   popular"? Built from scratch on MovieLens, it barely beats a plain bias model on
   rating error and *loses* to popularity on actual top-10 recommendations — better
   ratings, worse recommendations.
+- **[Neural Net](projects/neural-net)** — a multilayer perceptron with hand-written
+  backprop (no framework), verified by gradient-checking to 1e-7, learning nonlinear
+  boundaries (XOR, moons, circles, spirals) that a linear model can't touch.
 
 ### Data & society
 
@@ -144,6 +148,10 @@ refuses to overstate its result:
 - **Win the right metric, not the easy one.** Recommender shows a matrix-factorization
   model beating the baselines on RMSE while *losing* to plain popularity on top-10
   recall — a reminder to evaluate on the objective you actually care about.
+- **Prove the math, and ask "worth it vs what?"** Neural Net gradient-checks its
+  hand-written backprop against numerical gradients before trusting a result, and is
+  explicit that its big accuracy win only exists because the problems were built to be
+  nonlinear — on data a line can separate, the net buys nothing.
 
 ## Graduated standalone repos
 
@@ -197,3 +205,4 @@ Each week's project starts with a short plan in [`plans/`](plans):
 | 2026-10-26 | [Causal Traps (causal inference)](plans/2026-10-26-causal-traps.md) |
 | 2026-11-02 | [Flight Network (network science)](plans/2026-11-02-flight-network.md) |
 | 2026-11-09 | [Recommender (collaborative filtering)](plans/2026-11-09-recommender.md) |
+| 2026-11-16 | [Neural Net from scratch](plans/2026-11-16-neural-net.md) |
