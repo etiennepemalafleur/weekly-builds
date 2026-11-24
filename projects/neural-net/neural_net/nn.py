@@ -32,15 +32,27 @@ def one_hot(y: np.ndarray, n_classes: int) -> np.ndarray:
 class MLP:
     """A tanh-hidden, softmax-output multilayer perceptron."""
 
-    def __init__(self, sizes: list[int], seed: int = 0):
+    def __init__(self, sizes: list[int], seed: int = 0, activation: str = "tanh"):
         if len(sizes) < 2:
             raise ValueError("need at least input and output sizes")
+        if activation not in ("tanh", "relu"):
+            raise ValueError("activation must be 'tanh' or 'relu'")
         self.sizes = list(sizes)
+        self.activation = activation
         rng = np.random.default_rng(seed)
         self.W, self.b = [], []
         for n_in, n_out in zip(sizes[:-1], sizes[1:]):
-            self.W.append(rng.normal(0, np.sqrt(1.0 / n_in), (n_in, n_out)))
+            # He init for ReLU, Xavier-ish for tanh.
+            scale = np.sqrt(2.0 / n_in) if activation == "relu" else np.sqrt(1.0 / n_in)
+            self.W.append(rng.normal(0, scale, (n_in, n_out)))
             self.b.append(np.zeros(n_out))
+
+    def _hidden(self, z: np.ndarray) -> np.ndarray:
+        return np.maximum(0.0, z) if self.activation == "relu" else np.tanh(z)
+
+    def _hidden_grad(self, a: np.ndarray) -> np.ndarray:
+        """Derivative of the hidden activation, expressed via its output `a`."""
+        return (a > 0).astype(a.dtype) if self.activation == "relu" else (1.0 - a ** 2)
 
     # --- forward ------------------------------------------------------------ #
 
@@ -51,7 +63,7 @@ class MLP:
         L = len(self.W)
         for l in range(L):
             z = a @ self.W[l] + self.b[l]
-            a = softmax(z) if l == L - 1 else np.tanh(z)
+            a = softmax(z) if l == L - 1 else self._hidden(z)
             acts.append(a)
         return acts[-1], acts
 
@@ -78,8 +90,8 @@ class MLP:
             dW[l] = acts[l].T @ delta
             db[l] = delta.sum(axis=0)
             if l > 0:
-                # backprop through the tanh activation that produced acts[l]
-                delta = (delta @ self.W[l].T) * (1.0 - acts[l] ** 2)
+                # backprop through the hidden activation that produced acts[l]
+                delta = (delta @ self.W[l].T) * self._hidden_grad(acts[l])
         return dW, db, self.loss(probs, y_onehot)
 
     # --- training ----------------------------------------------------------- #

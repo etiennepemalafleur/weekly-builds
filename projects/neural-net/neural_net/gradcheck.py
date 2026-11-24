@@ -15,14 +15,14 @@ from .nn import MLP, one_hot
 
 
 def max_relative_error(sizes=(2, 8, 3), n: int = 20, eps: float = 1e-6,
-                       seed: int = 0) -> float:
+                       seed: int = 0, activation: str = "tanh") -> float:
     """Largest relative error between analytic and numerical gradients.
 
     Checks every weight and bias on a small random problem. A value near 1e-7 means
     backprop is implemented correctly.
     """
     rng = np.random.default_rng(seed)
-    net = MLP(list(sizes), seed=seed)
+    net = MLP(list(sizes), seed=seed, activation=activation)
     X = rng.normal(size=(n, sizes[0]))
     y = rng.integers(0, sizes[-1], size=n)
     Y = one_hot(y, sizes[-1])

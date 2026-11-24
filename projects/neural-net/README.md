@@ -51,11 +51,45 @@ the ability to represent nonlinear functions.
 The loss curve is the network actually learning — cross-entropy falling epoch by
 epoch as gradient descent finds weights that fit each shape.
 
+## Scaling up: real handwritten digits
+
+Toys prove the net can bend a boundary; this proves it works on real,
+high-dimensional data. Each sample is an 8×8 grayscale scan of a handwritten digit —
+64 input features, 10 classes — trained with the same hand-written backprop, now with
+**ReLU** hidden units (gradient-checked just like tanh: max relative error ~2e-6).
+
+![digit samples](assets/digit_samples.png)
+
+```
+Handwritten digits (8x8, 10 classes), test accuracy:
+  linear model:  98.1%
+  neural net:    98.9%  (ReLU, 100 hidden units)
+```
+
+And here's the honest payoff. On the 2-D toys the net beat the line by *47 points*;
+on real digits it wins by **under one**. Why? Because real digits are *mostly linearly
+separable* — a plain linear model already gets 98%. **Nonlinearity earns its keep when
+the problem is nonlinear; it isn't a free upgrade.** The same experiment that showed
+the net's power also shows its limits.
+
+![digit confusion](assets/digit_confusion.png)
+
+The handful of mistakes are the ones you'd make too — sloppy 9s read as 5s, an odd 4,
+a curly 6:
+
+![digit mistakes](assets/digit_mistakes.png)
+
+And you can even look at what the first layer learned — each hidden unit's weights,
+drawn as an 8×8 image, is a little stroke-and-edge detector:
+
+![digit weights](assets/digit_weights.png)
+
 ## Install & run
 
 ```bash
 pip install -r requirements.txt
-python -m neural_net                  # gradient check, accuracy table, charts
+python -m neural_net                  # the 2-D study: gradient check, accuracy, charts
+python -m neural_net.digits           # the handwritten-digits study
 python -m neural_net --epochs 800
 ```
 
@@ -76,12 +110,16 @@ python -m neural_net --epochs 800
 ## What's inside
 
 - `nn.py` — the `MLP`: forward pass, hand-derived backprop (`gradients`), and
-  minibatch-SGD training. Zero hidden layers gives logistic regression.
-- `gradcheck.py` — numerical vs. analytic gradient comparison (the correctness proof)
+  minibatch-SGD training, with `tanh` or `relu` hidden units. Zero hidden layers gives
+  logistic regression.
+- `gradcheck.py` — numerical vs. analytic gradient comparison, for both activations
+  (the correctness proof)
 - `datasets.py` — XOR, moons, circles, and spirals: 2-D problems no line can solve
-- `experiment.py` — train a linear model and the net on each, report accuracy
-- `plots.py` — the decision-boundary grid and the training-loss curve
-- `cli.py` — the command-line entry point
+- `digits.py` — the real handwritten-digit study (committed `data/digits.npz`),
+  confusion matrix, and run entry point (`python -m neural_net.digits`)
+- `experiment.py` — train a linear model and the net on each 2-D set, report accuracy
+- `plots.py` — the decision-boundary grid, the loss curve, and the digit charts
+- `cli.py` — the 2-D-study command-line entry point
 
 ## Tests
 
@@ -89,9 +127,11 @@ python -m neural_net --epochs 800
 python -m pytest
 ```
 
-All 10 tests run offline and deterministically. The first and most important checks
-that analytic gradients match numerical gradients to under `1e-5` on two different
-architectures — if that passes, backprop is correct. The rest confirm the pieces
-(softmax is a distribution, shapes line up), that training drives the loss down and
-solves XOR, that the net beats the linear baseline on nonlinear data, and that a
-zero-hidden-layer network still aces a linearly separable problem.
+All 15 tests run offline and deterministically. The first and most important checks
+that analytic gradients match numerical gradients to under `1e-5` — for **both** tanh
+and ReLU, on several architectures — because if that passes, backprop is correct. The
+rest confirm the pieces (softmax is a distribution, shapes line up), that training
+drives the loss down and solves XOR, that the net beats the linear baseline on
+nonlinear data while a zero-hidden-layer network still aces a linearly separable one,
+and that the net classifies the real handwritten digits above 90% (as does the strong
+linear baseline).

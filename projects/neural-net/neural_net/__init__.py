@@ -4,6 +4,7 @@ Hand-written forward and backward passes (numpy, no framework), verified against
 numerical gradients, shown learning nonlinear 2-D problems a linear model cannot.
 """
 
+from . import digits
 from .datasets import DATASETS, circles, moons, spirals, xor
 from .experiment import Comparison, run, run_all
 from .gradcheck import max_relative_error
@@ -22,4 +23,5 @@ __all__ = [
     "run",
     "run_all",
     "Comparison",
+    "digits",
 ]

@@ -34,7 +34,7 @@ their own [standalone repositories](#graduated-standalone-repos).
 | [Causal Traps](projects/causal-traps) | Statistics | causal inference (DAGs, adjustment) |
 | [Flight Network](projects/flight-network) | Networks | graph theory, robustness |
 | [Recommender](projects/recommender) | Machine learning | collaborative filtering, matrix factorization |
-| [Neural Net](projects/neural-net) | Machine learning | neural network + backprop from scratch |
+| [Neural Net](projects/neural-net) | Machine learning | neural network + backprop from scratch (ReLU, real digits) |
 
 ---
 
@@ -74,7 +74,9 @@ their own [standalone repositories](#graduated-standalone-repos).
   ratings, worse recommendations.
 - **[Neural Net](projects/neural-net)** — a multilayer perceptron with hand-written
   backprop (no framework), verified by gradient-checking to 1e-7, learning nonlinear
-  boundaries (XOR, moons, circles, spirals) that a linear model can't touch.
+  boundaries (XOR, moons, circles, spirals) that a linear model can't touch — then
+  scaled up (with ReLU) to classify real handwritten digits at ~99%, where the honest
+  twist is that the linear baseline is already nearly as good.
 
 ### Data & society
 
@@ -206,3 +208,4 @@ Each week's project starts with a short plan in [`plans/`](plans):
 | 2026-11-02 | [Flight Network (network science)](plans/2026-11-02-flight-network.md) |
 | 2026-11-09 | [Recommender (collaborative filtering)](plans/2026-11-09-recommender.md) |
 | 2026-11-16 | [Neural Net from scratch](plans/2026-11-16-neural-net.md) |
+| 2026-11-24 | [Neural Net: ReLU + real digits (depth)](plans/2026-11-24-neural-net-digits.md) |
